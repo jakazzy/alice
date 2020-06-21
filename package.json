@@ -4,11 +4,16 @@
   "description": "A simple app for assisting in triaging patients (only mild to moderate this excludes severe patients since at the stage a chatbot is of no use) for treatment of CV19 ",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon src/app.js",
+    "start": "npm run build  && node dist/server",
+    "start:prod": "NODE_ENV=production nodemon src/app.js",
+    "clean": "rm -rf dist",
+    "build": "babel . --ignore node_modules,test,dist,coverage -s -d dist",
+    "prod": "npm run clean && npm run build && node bin/prod",
     "prettier": "node_modules/.bin/prettier . \"src/**/*.{js,json}\"",
-      "format": "npm run prettier -- --write",
-      "lint": "node_modules/.bin/eslint \"src/**/*.{js,jsx,css}\"",
-      "lint:fix": "npm run lint -- --fix"
+    "format": "npm run prettier -- --write",
+    "lint": "node_modules/.bin/eslint \"src/**/*.{js,jsx,css}\"",
+    "lint:fix": "npm run lint -- --fix"  
   }, "lint-staged": {
     "src/**/*.{js,jsx}": [
         "npm run format",
