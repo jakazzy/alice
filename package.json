@@ -5,7 +5,7 @@
     "main": "app.js",
     "scripts": {
         "start:dev": "nodemon --exec babel-node src/app.js",
-        "start": "npm run build  && node dist/app",
+        "start": "node dist/app",
         "start:prod": "NODE_ENV=production nodemon src/app.js",
         "clean": "rm -rf dist",
         "build": "babel . --ignore node_modules,test,dist -s -d dist",
