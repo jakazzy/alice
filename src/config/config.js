@@ -2,7 +2,7 @@ import 'dotenv/config'
 
 export const config = {
     fbPgeToken: process.env.FB_PAGE_TOKEN,
-    fbVerfyToken: process.env.VERIFY_TOKEN,
+    fbVerfyToken: process.env.FB_VERIFY_TOKEN,
     fbAppSecret: process.env.FB_APP_SECRET,
     serverUrl: process.env.SERVER_URL,
     gglePrjctId: process.env.GOOGLE_PROJECT_ID,

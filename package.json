@@ -4,8 +4,8 @@
     "description": "A simple app for assisting in triaging patients (only mild to moderate this excludes severe patients since at the stage a chatbot is of no use) for treatment of CV19 ",
     "main": "app.js",
     "scripts": {
-        "start:dev": "nodemon src/app.js",
-        "start": "npm run build  && node dist/server",
+        "start:dev": "nodemon --exec babel-node src/app.js",
+        "start": "npm run build  && node dist/app",
         "start:prod": "NODE_ENV=production nodemon src/app.js",
         "clean": "rm -rf dist",
         "build": "babel . --ignore node_modules,test,dist,coverage -s -d dist",

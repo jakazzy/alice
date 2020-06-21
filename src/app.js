@@ -4,6 +4,7 @@
 /* eslint-disable default-case */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
+import 'dotenv/config'
 import dialogflow from 'dialogflow'
 import express from 'express'
 import bodyParser from 'body-parser'
@@ -36,12 +37,12 @@ app.use(
 app.use(bodyParser.json())
 
 const credentials = {
-    client_email: config.GOOGLE_CLIENT_EMAIL,
-    private_key: config.GOOGLE_PRIVATE_KEY
+    client_email: config.ggleClientId,
+    private_key: config.gglePrivateKey
 }
 
 const sessionClient = new dialogflow.SessionsClient({
-    projectId: config.GOOGLE_PROJECT_ID,
+    projectId: config.gglePrjctId,
     credentials
 })
 
@@ -57,7 +58,7 @@ app.get('/webhook/', function (req, res) {
     console.log('request')
     if (
         req.query['hub.mode'] === 'subscribe' &&
-        req.query['hub.verify_token'] === config.FB_VERIFY_TOKEN
+        req.query['hub.verify_token'] === config.fbVerfyToken
     ) {
         res.status(200).send(req.query['hub.challenge'])
     } else {
@@ -333,7 +334,7 @@ async function sendToDialogFlow(sender, textString, params) {
 
     try {
         const sessionPath = sessionClient.sessionPath(
-            config.GOOGLE_PROJECT_ID,
+            config.gglePrjctId,
             sessionIds.get(sender)
         )
 
@@ -342,7 +343,7 @@ async function sendToDialogFlow(sender, textString, params) {
             queryInput: {
                 text: {
                     text: textString,
-                    languageCode: config.DF_LANGUAGE_CODE
+                    languageCode: config.dfLangCode
                 }
             },
             queryParams: {
@@ -408,7 +409,7 @@ function sendGifMessage(recipientId) {
             attachment: {
                 type: 'image',
                 payload: {
-                    url: `${config.SERVER_URL}/assets/instagram_logo.gif`
+                    url: `${config.serverUrl}/assets/instagram_logo.gif`
                 }
             }
         }
@@ -430,7 +431,7 @@ function sendAudioMessage(recipientId) {
             attachment: {
                 type: 'audio',
                 payload: {
-                    url: `${config.SERVER_URL}/assets/sample.mp3`
+                    url: `${config.serverUrl}/assets/sample.mp3`
                 }
             }
         }
@@ -452,7 +453,7 @@ function sendVideoMessage(recipientId, videoName) {
             attachment: {
                 type: 'video',
                 payload: {
-                    url: config.SERVER_URL + videoName
+                    url: config.serverUrl + videoName
                 }
             }
         }
@@ -474,7 +475,7 @@ function sendFileMessage(recipientId, fileName) {
             attachment: {
                 type: 'file',
                 payload: {
-                    url: config.SERVER_URL + fileName
+                    url: config.serverUrl + fileName
                 }
             }
         }
@@ -648,7 +649,7 @@ function sendAccountLinking(recipientId) {
                     buttons: [
                         {
                             type: 'account_link',
-                            url: `${config.SERVER_URL}/authorize`
+                            url: `${config.serverUrl}/authorize`
                         }
                     ]
                 }
@@ -669,7 +670,7 @@ function callSendAPI(messageData) {
         {
             uri: 'https://graph.facebook.com/v3.2/me/messages',
             qs: {
-                access_token: config.FB_PAGE_TOKEN
+                access_token: config.fbPgeToken
             },
             method: 'POST',
             json: messageData
