@@ -5,10 +5,9 @@
     "main": "app.js",
     "scripts": {
         "start:dev": "nodemon --exec babel-node src/app.js",
-        "start": "npm run build  && node dist/app",
+        "start": "node dist/app",
         "start:prod": "NODE_ENV=production nodemon src/app.js",
         "clean": "rm -rf dist",
-        "build": "babel-node . --ignore node_modules,test,dist -s -d dist",
         "prod": "npm run clean && npm run build && node bin/prod",
         "prettier": "node_modules/.bin/prettier . \"src/**/*.{js,json}\"",
         "format": "npm run prettier -- --write",
