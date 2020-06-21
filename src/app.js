@@ -9,8 +9,7 @@ import request from 'request'
 import uuid from 'uuid'
 
 const app = express()
-checkConfigParams()
-app.set('port', process.env.PORT || 5000)
+const PORT = process.env.PORT || 5000
 
 //verify request came from facebook
 app.use(
@@ -878,6 +877,6 @@ function isDefined(obj) {
 }
 
 // Spin up the server
-app.listen(app.get('port'), function () {
-    console.log('running on port', app.get('port'))
+app.listen(PORT, function () {
+    console.log(`server is running on port ${PORT}`)
 })
