@@ -1,0 +1,41 @@
+{
+  "name": "alicerx",
+  "version": "1.0.0",
+  "description": "A simple facebook chatbot for assisting in triaging patients (only mild to moderate this excludes severe patients since at the stage a chatbot is of no use) for treatment of CV19 ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakazzy/alice.git"
+  },
+  "keywords": [
+    "facebook",
+    "chatbot",
+    "dialogflow",
+    "express",
+    "facebook",
+    "messenger",
+    "CV-19"
+  ],
+  "author": "jakazzy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jakazzy/alice/issues"
+  },
+  "homepage": "https://github.com/jakazzy/alice#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dialogflow": "^1.2.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "request": "^2.88.2",
+    "uuid": "^8.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@babel/node": "^7.10.3",
+    "@babel/preset-env": "^7.10.3"
+  }
+}
