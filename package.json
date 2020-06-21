@@ -1,7 +1,7 @@
 {
   "name": "alicerx",
   "version": "1.0.0",
-  "description": "A simple facebook chatbot for assisting in triaging patients (only mild to moderate this excludes severe patients since at the stage a chatbot is of no use) for treatment of CV19 ",
+  "description": "A simple app for assisting in triaging patients (only mild to moderate this excludes severe patients since at the stage a chatbot is of no use) for treatment of CV19 ",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
