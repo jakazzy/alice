@@ -1,1 +1,1 @@
-web: node dist/app.js
+web: babel-node src/app.js
