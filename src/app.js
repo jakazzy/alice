@@ -1,16 +1,20 @@
-'use strict'
-// ignore no-unused-vars
-import { config, checkConfigParams } from './config/config'
+/* eslint-disable camelcase */
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-case-declarations */
+/* eslint-disable default-case */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
 import dialogflow from 'dialogflow'
 import express from 'express'
-import crypto from 'crypto'
 import bodyParser from 'body-parser'
 import request from 'request'
 import uuid from 'uuid'
+import { config, checkConfigParams } from './config/config'
+import verifyRequestSignature from './middleware/middleware'
 
 const app = express()
 const PORT = process.env.PORT || 5000
-
+checkConfigParams()
 //verify request came from facebook
 app.use(
     bodyParser.json({
@@ -68,20 +72,21 @@ app.get('/webhook/', function (req, res) {
  * All callbacks for Messenger are POST-ed. They will be sent to the same
  * webhook. Be sure to subscribe your app to your page to receive callbacks
  * for your page.
- * https://developers.facebook.com/docs/messenger-platform/product-overview/setup#subscribe_app
+ * https://developers.facebook.com/docs/messen
+ * ger-platform/product-overview/setup#subscribe_app
  *
  */
 app.post('/webhook/', function (req, res) {
-    var data = req.body
+    const data = req.body
     console.log(JSON.stringify(data))
 
     // Make sure this is a page subscription
-    if (data.object == 'page') {
+    if (data.object === 'page') {
         // Iterate over each entry
         // There may be multiple if batched
         data.entry.forEach(function (pageEntry) {
-            var pageID = pageEntry.id
-            var timeOfEvent = pageEntry.time
+            const pageID = pageEntry.id
+            const timeOfEvent = pageEntry.time
 
             // Iterate over each messaging event
             pageEntry.messaging.forEach(function (messagingEvent) {
@@ -113,31 +118,34 @@ app.post('/webhook/', function (req, res) {
 })
 
 function receivedMessage(event) {
-    var senderID = event.sender.id
-    var recipientID = event.recipient.id
-    var timeOfMessage = event.timestamp
-    var message = event.message
+    const senderID = event.sender.id
+    const recipientID = event.recipient.id
+    const timeOfMessage = event.timestamp
+    const { message } = event
 
     if (!sessionIds.has(senderID)) {
         sessionIds.set(senderID, uuid.v1())
     }
-    //console.log("Received message for user %d and page %d at %d with message:", senderID, recipientID, timeOfMessage);
+    //console.log("Received message for u
+    // ser %d and page %d at %d with
+    //  message:", senderID, recipientID, timeOfMessage);
     //console.log(JSON.stringify(message));
 
-    var isEcho = message.is_echo
-    var messageId = message.mid
-    var appId = message.app_id
-    var metadata = message.metadata
+    const isEcho = message.is_echo
+    const messageId = message.mid
+    const appId = message.app_id
+    const { metadata } = message
 
     // You may get a text or attachment but not both
-    var messageText = message.text
-    var messageAttachments = message.attachments
-    var quickReply = message.quick_reply
+    const messageText = message.text
+    const messageAttachments = message.attachments
+    const quickReply = message.quick_reply
 
     if (isEcho) {
         handleEcho(messageId, appId, metadata)
         return
-    } else if (quickReply) {
+    }
+    if (quickReply) {
         handleQuickReply(senderID, quickReply, messageId)
         return
     }
@@ -156,7 +164,7 @@ function handleMessageAttachments(messageAttachments, senderID) {
 }
 
 function handleQuickReply(senderID, quickReply, messageId) {
-    var quickReplyPayload = quickReply.payload
+    const quickReplyPayload = quickReply.payload
     console.log(
         'Quick reply for message %s with payload %s',
         messageId,
@@ -166,7 +174,8 @@ function handleQuickReply(senderID, quickReply, messageId) {
     sendToDialogFlow(senderID, quickReplyPayload)
 }
 
-//https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-echo
+//https://developers.facebook.com
+// /docs/messenger-platform/webhook-reference/message-echo
 function handleEcho(messageId, appId, metadata) {
     // Just logging message echoes to console
     console.log(
@@ -201,9 +210,9 @@ function handleMessage(message, sender) {
             })
             break
         case 'quickReplies': //quick replies
-            let replies = []
+            const replies = []
             message.quickReplies.quickReplies.forEach((text) => {
-                let reply = {
+                const reply = {
                     content_type: 'text',
                     title: text,
                     payload: text
@@ -219,12 +228,12 @@ function handleMessage(message, sender) {
 }
 
 function handleCardMessages(messages, sender) {
-    let elements = []
-    for (var m = 0; m < messages.length; m++) {
-        let message = messages[m]
-        let buttons = []
-        for (var b = 0; b < message.card.buttons.length; b++) {
-            let isLink =
+    const elements = []
+    for (let m = 0; m < messages.length; m++) {
+        const message = messages[m]
+        const buttons = []
+        for (let b = 0; b < message.card.buttons.length; b++) {
+            const isLink =
                 message.card.buttons[b].postback.substring(0, 4) === 'http'
             let button
             if (isLink) {
@@ -243,7 +252,7 @@ function handleCardMessages(messages, sender) {
             buttons.push(button)
         }
 
-        let element = {
+        const element = {
             title: message.card.title,
             image_url: message.card.imageUri,
             subtitle: message.card.subtitle,
@@ -255,14 +264,14 @@ function handleCardMessages(messages, sender) {
 }
 
 function handleMessages(messages, sender) {
-    let timeoutInterval = 1100
+    const timeoutInterval = 1100
     let previousType
     let cardTypes = []
     let timeout = 0
-    for (var i = 0; i < messages.length; i++) {
+    for (let i = 0; i < messages.length; i++) {
         if (
-            previousType == 'card' &&
-            (messages[i].message != 'card' || i == messages.length - 1)
+            previousType === 'card' &&
+            (messages[i].message !== 'card' || i === messages.length - 1)
         ) {
             timeout = (i - 1) * timeoutInterval
             setTimeout(
@@ -272,7 +281,10 @@ function handleMessages(messages, sender) {
             cardTypes = []
             timeout = i * timeoutInterval
             setTimeout(handleMessage.bind(null, messages[i], sender), timeout)
-        } else if (messages[i].message == 'card' && i == messages.length - 1) {
+        } else if (
+            messages[i].message === 'card' &&
+            i === messages.length - 1
+        ) {
             cardTypes.push(messages[i])
             timeout = (i - 1) * timeoutInterval
             setTimeout(
@@ -280,7 +292,7 @@ function handleMessages(messages, sender) {
                 timeout
             )
             cardTypes = []
-        } else if (messages[i].message == 'card') {
+        } else if (messages[i].message === 'card') {
             cardTypes.push(messages[i])
         } else {
             timeout = i * timeoutInterval
@@ -292,12 +304,12 @@ function handleMessages(messages, sender) {
 }
 
 function handleDialogFlowResponse(sender, response) {
-    let responseText = response.fulfillmentMessages.fulfillmentText
+    const responseText = response.fulfillmentMessages.fulfillmentText
 
-    let messages = response.fulfillmentMessages
-    let action = response.action
-    let contexts = response.outputContexts
-    let parameters = response.parameters
+    const messages = response.fulfillmentMessages
+    const { action } = response
+    const contexts = response.outputContexts
+    const { parameters } = response
 
     sendTypingOff(sender)
 
@@ -305,7 +317,7 @@ function handleDialogFlowResponse(sender, response) {
         handleDialogFlowAction(sender, action, messages, contexts, parameters)
     } else if (isDefined(messages)) {
         handleMessages(messages, sender)
-    } else if (responseText == '' && !isDefined(action)) {
+    } else if (responseText === '' && !isDefined(action)) {
         //dialogflow could not evaluate input.
         sendTextMessage(
             sender,
@@ -325,7 +337,7 @@ async function sendToDialogFlow(sender, textString, params) {
             sessionIds.get(sender)
         )
 
-        const request = {
+        const requests = {
             session: sessionPath,
             queryInput: {
                 text: {
@@ -339,7 +351,7 @@ async function sendToDialogFlow(sender, textString, params) {
                 }
             }
         }
-        const responses = await sessionClient.detectIntent(request)
+        const responses = await sessionClient.detectIntent(requests)
 
         const result = responses[0].queryResult
         handleDialogFlowResponse(sender, result)
@@ -350,7 +362,7 @@ async function sendToDialogFlow(sender, textString, params) {
 }
 
 function sendTextMessage(recipientId, text) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -366,7 +378,7 @@ function sendTextMessage(recipientId, text) {
  *
  */
 function sendImageMessage(recipientId, imageUrl) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -388,7 +400,7 @@ function sendImageMessage(recipientId, imageUrl) {
  *
  */
 function sendGifMessage(recipientId) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -396,7 +408,7 @@ function sendGifMessage(recipientId) {
             attachment: {
                 type: 'image',
                 payload: {
-                    url: config.SERVER_URL + '/assets/instagram_logo.gif'
+                    url: `${config.SERVER_URL}/assets/instagram_logo.gif`
                 }
             }
         }
@@ -410,7 +422,7 @@ function sendGifMessage(recipientId) {
  *
  */
 function sendAudioMessage(recipientId) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -418,7 +430,7 @@ function sendAudioMessage(recipientId) {
             attachment: {
                 type: 'audio',
                 payload: {
-                    url: config.SERVER_URL + '/assets/sample.mp3'
+                    url: `${config.SERVER_URL}/assets/sample.mp3`
                 }
             }
         }
@@ -432,7 +444,7 @@ function sendAudioMessage(recipientId) {
  * example videoName: "/assets/allofus480.mov"
  */
 function sendVideoMessage(recipientId, videoName) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -454,7 +466,7 @@ function sendVideoMessage(recipientId, videoName) {
  * example fileName: fileName"/assets/test.txt"
  */
 function sendFileMessage(recipientId, fileName) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -476,7 +488,7 @@ function sendFileMessage(recipientId, fileName) {
  *
  */
 function sendButtonMessage(recipientId, text, buttons) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -496,7 +508,7 @@ function sendButtonMessage(recipientId, text, buttons) {
 }
 
 function sendGenericMessage(recipientId, elements) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -526,9 +538,9 @@ function sendReceiptMessage(
     adjustments
 ) {
     // Generate a random receipt ID as the API requires a unique ID
-    var receiptId = 'order' + Math.floor(Math.random() * 1000)
+    const receiptId = `order${Math.floor(Math.random() * 1000)}`
 
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -559,7 +571,7 @@ function sendReceiptMessage(
  *
  */
 function sendQuickReply(recipientId, text, replies, metadata) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -578,7 +590,7 @@ function sendQuickReply(recipientId, text, replies, metadata) {
  *
  */
 function sendReadReceipt(recipientId) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -593,7 +605,7 @@ function sendReadReceipt(recipientId) {
  *
  */
 function sendTypingOn(recipientId) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -608,7 +620,7 @@ function sendTypingOn(recipientId) {
  *
  */
 function sendTypingOff(recipientId) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -623,7 +635,7 @@ function sendTypingOff(recipientId) {
  *
  */
 function sendAccountLinking(recipientId) {
-    var messageData = {
+    const messageData = {
         recipient: {
             id: recipientId
         },
@@ -636,7 +648,7 @@ function sendAccountLinking(recipientId) {
                     buttons: [
                         {
                             type: 'account_link',
-                            url: config.SERVER_URL + '/authorize'
+                            url: `${config.SERVER_URL}/authorize`
                         }
                     ]
                 }
@@ -663,9 +675,9 @@ function callSendAPI(messageData) {
             json: messageData
         },
         function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                var recipientId = body.recipient_id
-                var messageId = body.message_id
+            if (!error && response.statusCode === 200) {
+                const recipientId = body.recipient_id
+                const messageId = body.message_id
 
                 if (messageId) {
                     console.log(
@@ -695,17 +707,18 @@ function callSendAPI(messageData) {
  * Postback Event
  *
  * This event is called when a postback is tapped on a Structured Message.
- * https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback-received
+ * https://developers.facebook.com/do
+ * cs/messenger-platform/webhook-reference/postback-received
  *
  */
 function receivedPostback(event) {
-    var senderID = event.sender.id
-    var recipientID = event.recipient.id
-    var timeOfPostback = event.timestamp
+    const senderID = event.sender.id
+    const recipientID = event.recipient.id
+    const timeOfPostback = event.timestamp
 
     // The 'payload' param is a developer-defined field which is set in a postback
     // button for Structured Messages.
-    var payload = event.postback.payload
+    const { payload } = event.postback
 
     switch (payload) {
         default:
@@ -731,16 +744,17 @@ function receivedPostback(event) {
  * Message Read Event
  *
  * This event is called when a previously-sent message has been read.
- * https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-read
+ * https://developers.facebook.com
+ * /docs/messenger-platform/webhook-reference/message-read
  *
  */
 function receivedMessageRead(event) {
-    var senderID = event.sender.id
-    var recipientID = event.recipient.id
+    const senderID = event.sender.id
+    const recipientID = event.recipient.id
 
     // All messages before watermark (a timestamp) or sequence have been seen.
-    var watermark = event.read.watermark
-    var sequenceNumber = event.read.seq
+    const { watermark } = event.read
+    const sequenceNumber = event.read.seq
 
     console.log(
         'Received message read event for watermark %d and sequence ' +
@@ -755,15 +769,16 @@ function receivedMessageRead(event) {
  *
  * This event is called when the Link Account or UnLink Account action has been
  * tapped.
- * https://developers.facebook.com/docs/messenger-platform/webhook-reference/account-linking
+ * https://developers.facebook.com/docs
+ * /messenger-platform/webhook-reference/account-linking
  *
  */
 function receivedAccountLink(event) {
-    var senderID = event.sender.id
-    var recipientID = event.recipient.id
+    const senderID = event.sender.id
+    const recipientID = event.recipient.id
 
-    var status = event.account_linking.status
-    var authCode = event.account_linking.authorization_code
+    const { status } = event.account_linking
+    const authCode = event.account_linking.authorization_code
 
     console.log(
         'Received account link event with for user %d with status %s ' +
@@ -778,16 +793,17 @@ function receivedAccountLink(event) {
  * Delivery Confirmation Event
  *
  * This event is sent to confirm the delivery of a message. Read more about
- * these fields at https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-delivered
+ * these fields at https://developers.facebook.
+ * com/docs/messenger-platform/webhook-reference/message-delivered
  *
  */
 function receivedDeliveryConfirmation(event) {
-    var senderID = event.sender.id
-    var recipientID = event.recipient.id
-    var delivery = event.delivery
-    var messageIDs = delivery.mids
-    var watermark = delivery.watermark
-    var sequenceNumber = delivery.seq
+    const senderID = event.sender.id
+    const recipientID = event.recipient.id
+    const { delivery } = event
+    const messageIDs = delivery.mids
+    const { watermark } = delivery
+    const sequenceNumber = delivery.seq
 
     if (messageIDs) {
         messageIDs.forEach(function (messageID) {
@@ -806,20 +822,21 @@ function receivedDeliveryConfirmation(event) {
  *
  * The value for 'optin.ref' is defined in the entry point. For the "Send to
  * Messenger" plugin, it is the 'data-ref' field. Read more at
- * https://developers.facebook.com/docs/messenger-platform/webhook-reference/authentication
+ * https://developers.facebook.com/docs
+ * /messenger-platform/webhook-reference/authentication
  *
  */
 function receivedAuthentication(event) {
-    var senderID = event.sender.id
-    var recipientID = event.recipient.id
-    var timeOfAuth = event.timestamp
+    const senderID = event.sender.id
+    const recipientID = event.recipient.id
+    const timeOfAuth = event.timestamp
 
     // The 'ref' field is set in the 'Send to Messenger' plugin, in the 'data-ref'
     // The developer can set this to an arbitrary value to associate the
     // authentication callback with the 'Send to Messenger' click event. This is
     // a way to do account linking when the user clicks the 'Send to Messenger'
     // plugin.
-    var passThroughParam = event.optin.ref
+    const passThroughParam = event.optin.ref
 
     console.log(
         'Received authentication for user %d and page %d with pass ' +
@@ -843,29 +860,9 @@ function receivedAuthentication(event) {
  * https://developers.facebook.com/docs/graph-api/webhooks#setup
  *
  */
-function verifyRequestSignature(req, res, buf) {
-    var signature = req.headers['x-hub-signature']
-
-    if (!signature) {
-        throw new Error("Couldn't validate the signature.")
-    } else {
-        var elements = signature.split('=')
-        var method = elements[0]
-        var signatureHash = elements[1]
-
-        var expectedHash = crypto
-            .createHmac('sha1', config.FB_APP_SECRET)
-            .update(buf)
-            .digest('hex')
-
-        if (signatureHash != expectedHash) {
-            throw new Error("Couldn't validate the request signature.")
-        }
-    }
-}
 
 function isDefined(obj) {
-    if (typeof obj == 'undefined') {
+    if (typeof obj === 'undefined') {
         return false
     }
 
