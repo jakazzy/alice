@@ -4,7 +4,6 @@
 /* eslint-disable default-case */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
-import 'dotenv/config'
 import dialogflow from 'dialogflow'
 import express from 'express'
 import bodyParser from 'body-parser'
