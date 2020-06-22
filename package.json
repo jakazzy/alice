@@ -5,9 +5,10 @@
     "main": "app.js",
     "scripts": {
         "start:dev": "nodemon --exec babel-node src/app.js",
-        "start": "babel-node src/app",
+        "start": "npm run build  && node dist/app",
         "start:prod": "NODE_ENV=production nodemon src/app.js",
         "clean": "rm -rf dist",
+        "start:dist": "babel . --ignore node_modules,test,dist -s -d dist",
         "prod": "npm run clean && npm run build && node bin/prod",
         "prettier": "node_modules/.bin/prettier . \"src/**/*.{js,json}\"",
         "format": "npm run prettier -- --write",
@@ -46,6 +47,7 @@
     },
     "homepage": "https://github.com/jakazzy/alice#readme",
     "dependencies": {
+        "@babel/cli": "^7.10.3",
         "body-parser": "^1.19.0",
         "dialogflow": "^1.2.0",
         "dotenv": "^8.2.0",
