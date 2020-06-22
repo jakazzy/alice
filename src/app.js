@@ -7,9 +7,8 @@
 import dialogflow from 'dialogflow'
 import express from 'express'
 import bodyParser from 'body-parser'
-import crypto from 'crypto'
 import request from 'request'
-import uuid from 'uuid'
+import { v1 as uuidv1 } from 'uuid'
 import sgMail from '@sendgrid/mail'
 import { config, checkConfigParams } from './config/config'
 import verifyRequestSignature from './middleware/middleware'
@@ -132,7 +131,7 @@ function receivedMessage(event) {
     const { message } = event
 
     if (!sessionIds.has(senderID)) {
-        sessionIds.set(senderID, uuid.v1())
+        sessionIds.set(senderID, uuidv1())
     }
     //console.log("Received message for u
     // ser %d and page %d at %d with
