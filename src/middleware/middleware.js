@@ -21,7 +21,7 @@ const verifyRequestSignature = (req, res, buf) => {
         const signatureHash = elements[1]
 
         const expectedHash = crypto
-            .createHmac('sha1', config.FB_APP_SECRET)
+            .createHmac('sha1', config.fbAppSecret)
             .update(buf)
             .digest('hex')
 
