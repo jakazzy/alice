@@ -5,9 +5,9 @@
     "main": "app.js",
     "scripts": {
         "start:dev": "nodemon --exec babel-node src/app.js",
-        "start": "npm run start:dist  && node src/app",
+        "start": "npm run start:dist  && node dist/app",
         "start:prod": "NODE_ENV=production nodemon src/app.js",
-        "clean": "rm -rf dist",
+        "clean": "rm -rf dist && mkdir dist",
         "start:dist": "npm run clean && npm run build-babel",
         "build-babel": "babel . --ignore node_modules,test,dist -s -d dist",
         "prod": "npm run clean && npm run build && node bin/prod",
@@ -56,7 +56,7 @@
         "request": "^2.88.2",
         "uuid": "^8.1.0",
         "@babel/cli": "^7.10.3",
-        "@babel/core": "^7.10.3"    
+        "@babel/core": "^7.10.3"
     },
     "devDependencies": {
         "@babel/node": "^7.10.3",
