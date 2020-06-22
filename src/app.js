@@ -190,10 +190,10 @@ function handleEcho(messageId, appId, metadata) {
 function sendEmail(subject, content) {
     console.log('sending email!')
     // const sgMail = require('@sendgrid/mail')
-    sgMail.setApiKey(config.SENGRID_API_KEY)
+    sgMail.setApiKey(config.sendgridApikey)
     const msg = {
-        to: config.EMAIL_TO,
-        from: config.EMAIL_FROM,
+        to: config.emailto,
+        from: config.emailfrom,
         subject: subject,
         text: content,
         html: content
