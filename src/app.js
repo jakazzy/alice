@@ -55,7 +55,12 @@ app.get('/', function (req, res) {
 
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
-    console.log(req.query['hub.mode'], req.query['hub.verify_token'])
+    console.log(
+        'query: ',
+        req.query['hub.mode'],
+        'hubverfy',
+        req.query['hub.verify_token']
+    )
 
     if (
         req.query['hub.mode'] === 'subscribe' &&
