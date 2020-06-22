@@ -7,6 +7,7 @@
 import dialogflow from 'dialogflow'
 import express from 'express'
 import bodyParser from 'body-parser'
+import crypto from 'crypto'
 import request from 'request'
 import uuid from 'uuid'
 import sgMail from '@sendgrid/mail'
