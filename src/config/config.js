@@ -8,7 +8,10 @@ export const config = {
     gglePrjctId: process.env.GOOGLE_PROJECT_ID,
     dfLangCode: process.env.DF_LANGUAGE_CODE,
     ggleClientId: process.env.GOOGLE_CLIENT_EMAIL,
-    gglePrivateKey: process.env.GOOGLE_PRIVATE_KEY
+    gglePrivateKey: process.env.GOOGLE_PRIVATE_KEY,
+    sendgridApikey: process.env.SENDGRID_API_KEY,
+    emailfrom: process.env.EMAIL_FROM,
+    emailto: process.env.EMAIL_TO
 }
 
 export const checkConfigParams = () => {
@@ -37,5 +40,17 @@ export const checkConfigParams = () => {
     if (!config.serverUrl) {
         //used for ink to static files
         throw new Error('missing SERVER_URL')
+    }
+    if (!config.SENGRID_API_KEY) {
+        //sending email
+        throw new Error('missing SENGRID_API_KEY')
+    }
+    if (!config.EMAIL_FROM) {
+        //sending email
+        throw new Error('missing EMAIL_FROM')
+    }
+    if (!config.EMAIL_TO) {
+        //sending email
+        throw new Error('missing EMAIL_TO')
     }
 }
