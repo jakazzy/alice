@@ -47,20 +47,20 @@
     },
     "homepage": "https://github.com/jakazzy/alice#readme",
     "dependencies": {
-        "@babel/cli": "^7.10.3",
         "body-parser": "^1.19.0",
         "dialogflow": "^1.2.0",
         "dotenv": "^8.2.0",
         "eslint": "^7.2.0",
         "express": "^4.17.1",
         "request": "^2.88.2",
-        "uuid": "^8.1.0"
-    },
-    "devDependencies": {
+        "uuid": "^8.1.0",
+        "@babel/cli": "^7.10.3",
         "@babel/core": "^7.10.3",
         "@babel/node": "^7.10.3",
         "@babel/preset-env": "^7.10.3",
-        "babel-preset-airbnb": "^5.0.0",
+        "babel-preset-airbnb": "^5.0.0"
+    },
+    "devDependencies": {
         "eslint-config-airbnb-base": "^14.2.0",
         "eslint-config-node": "^4.1.0",
         "eslint-config-prettier": "^6.11.0",
