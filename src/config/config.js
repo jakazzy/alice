@@ -8,7 +8,7 @@ export const config = {
     gglePrjctId: process.env.GOOGLE_PROJECT_ID,
     dfLangCode: process.env.DF_LANGUAGE_CODE,
     ggleClientId: process.env.GOOGLE_CLIENT_EMAIL,
-    gglePrivateKey: process.env.GOOGLE_PRIVATE_KEY,
+    gglePrivateKey: JSON.parse(process.env.GOOGLE_PRIVATE_KEY),
     sendgridApikey: process.env.SENDGRID_API_KEY,
     emailfrom: process.env.EMAIL_FROM,
     emailto: process.env.EMAIL_TO
