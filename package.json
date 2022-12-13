@@ -58,7 +58,7 @@
         "dialogflow": "^1.2.0",
         "dotenv": "^8.2.0",
         "eslint": "^7.2.0",
-        "express": "^4.17.1",
+        "express": "^4.17.3",
         "regenerator-runtime": "^0.13.5",
         "request": "^2.88.2",
         "uuid": "^8.1.0"
